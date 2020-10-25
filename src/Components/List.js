@@ -44,6 +44,7 @@ class List extends React.Component {
         <ListWrapper>
 
             <button onClick={this.handleCheck}>check</button>
+            {this.state.data.content['0'].id}
           <Item primary></Item>
           
           <Item primary />
