@@ -30,7 +30,7 @@ const Input = (props) =>{
 
     return(<InputWrapper>
         <Label>{props.content}</Label>
-        <InputText type="text" name={props.name} value={props.value} onChange={props.valueFn}></InputText>
+        <InputText type={props.type ? 'number' : 'text'} name={props.name} value={props.value} onChange={props.valueFn} required></InputText>
     </InputWrapper>)
 
 

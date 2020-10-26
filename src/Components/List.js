@@ -10,15 +10,25 @@ const Wrapper = styled.div`
 `;
 
 const ListWrapper = styled.ul`
+  top: -2vh;
   display: grid;
   grid-template-columns: 20% 20% 20% 20% 10% 10%;
-  width: 90%;
+  width: 97vw;
   position: relative;
-  left: 5%;
   border-bottom: solid 1px #7a7a7a;
-  &:nth-child(1) {
+  opacity: 1;
+  animation: show 1s;
+  &:nth-child(2) {
     color: #0e9aa4;
     background-color: #1e1e1f;
+  }
+  @keyframes show {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -38,22 +48,74 @@ const Form = styled.form`
   width: 80%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 20%;
+  margin-top: 10%;
 `;
 
 const FormButton = styled.button`
-
-    background-color: white;
-    color: #0e9aa4;
-    font-size: 16px;
-    padding: 10px 10px 10px 10px;
-
+  background-color: white;
+  color: #0e9aa4;
+  font-size: 16px;
+  padding: 10px 10px 10px 10px;
 `;
 
 const FromHeader = styled.h1`
-
   color: #0e9aa4;
+`;
 
+const AddItem = styled.a`
+  font-size: 20px;
+  width: 60%;
+  left: 40%;
+  text-align: center;
+  top: 10vh;
+  position: relative;
+  padding: 10px 20px 10px 20px;
+  border: 3px solid #0e9aa4;
+  color: #0e9aa4;
+  background-color: #1e1e1f;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+const SearchWrapper = styled.div`
+  width: 99vw;
+  position: relative;
+  height: 100px;
+  background-color: #5f5f5f;
+  margin: 0;
+`;
+
+const Search = styled.input`
+  padding: 10px 10px 10px 10px;
+  background-color: #1e1e1f;
+  color: #0e9aa4;
+  position: relative;
+  width: 10vw;
+  top: 2vh;
+  left: 40vw;
+  margin-left: 10px;
+  font-size: 16px;
+`;
+
+const SearchLabel = styled.a`
+  color: white;
+  position: relative;
+  left: 40vw;
+  padding: 10px 10px 10px 10px;
+  top: 2vh;
+  background-color: #0e9aa4;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+const OptionInput = styled.select`
+  position: relative;
+  left: 40vw;
+  margin-left: 10px;
+  background-color: #5f5f5f;
+  color: #0e9aa4;
+  top: 2vh;
+  font-size: 15px;
 `;
 
 class List extends React.Component {
@@ -62,19 +124,19 @@ class List extends React.Component {
     ready: "",
     refreshShoeList: true,
     Cars: {
-      id: '',
-      brand: '',
-      model: '',
-      color: ''
-  }
+      id: "",
+      brand: "",
+      model: "",
+      color: "",
+      type: "",
+    },
+    type: "color",
+    value: "",
   };
 
   dane = {
     data: [],
   };
-
-  
-
 
   async componentDidMount() {
     const getData = await fetch("http://localhost:8080/Cars").then((response) =>
@@ -102,51 +164,144 @@ class List extends React.Component {
     this.deleteFunction(e);
   };
 
-  handleModify = (e) => {
-      this.setState({
-        Cars: {
-          id: e.id,
-          brand: e.brand,
-          model: e.model,
-          color: e.color,
-        },
-      })
+  Car = {
+    id: "",
+    brand: "",
+    model: "",
+    color: "",
   };
 
-  Car = {
-      id: 10,
-      brand: 'x5',
-      model: 'x7',
-      color: 'sad'
+  handleModify = (e) => {
+    this.setState({
+      Cars: {
+        id: e.id,
+        brand: e.brand,
+        model: e.model,
+        color: e.color,
+        type: "modify",
+      },
+    });
+    this.Car.id = e.id;
+  };
+
+  changeItem = (e) => {
+    this.Car[e.target.name] = e.target.value;
+  };
+
+  async UpdateFunction(e) {
+    await fetch("http://localhost:8080/Cars", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(this.Car),
+    });
+    this.componentDidMount();
   }
 
-  addItem = (e) => {
-      this.Car = {[e.target.name]: e.target.value}
-  }
-
-  submitFunction = (e) =>{
-
-    const formData = new FormData();
-    formData.append('id',4);
-    formData.append('brand','asd');
-    formData.append('model','csd');
-    formData.append('color','dsf');
-
+  submitFunctionModify = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/Cars",{
+    console.log(this.Car.id);
+    this.UpdateFunction();
+  };
+
+  async AddFunction(e) {
+    await fetch("http://localhost:8080/Cars", {
       method: "post",
       headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(this.Car)
-    })
+      body: JSON.stringify(this.Car),
+    });
+    this.componentDidMount();
   }
-  
+
+  submitFunctionAdd = (e) => {
+    e.preventDefault();
+    console.log(this.Car.id);
+    this.AddFunction();
+  };
+
+  AddItem = (e) => {
+    this.setState({
+      Cars: {
+        id: 1,
+        brand: "",
+        model: "",
+        color: "",
+        type: "addItem",
+      },
+    });
+  };
+
+  getType = (e) => {
+    this.setState({
+      type: e.target.value,
+    });
+  };
+  getValue = (e) => {
+    this.setState({
+      value: e.target.value,
+    });
+  };
+  DataSet = {
+    type: "",
+    value: "",
+  };
+
+  ContentSet = () => {
+    
+    this.DataSet.value = this.state.value;
+    this.setState({
+      ready: '',
+    })
+
+    if(this.state.type === 'color'){
+      this.ContentColorFind(this.DataSet);
+    }else{
+      this.findById();
+    }
+    
+    
+  };
+
+  async findById(){
+    const getData = await fetch(
+      "http://localhost:8080/Cars/" + this.DataSet.value
+    ).then((response) => response.json());
+    this.setState({
+      data: getData,
+    })
+    
+  }
+
+  async ContentColorFind(dataProps) {
+    const getData = await fetch(
+      "http://localhost:8080/Cars/color/" + dataProps.value
+    ).then((response) => response.json());
+    if (getData) {
+      this.setState({
+        data: getData,
+      });
+    }
+  }
 
   render() {
     return (
       <Wrapper>
+        <SearchWrapper>
+          <SearchLabel onClick={this.ContentSet}>Wyszukaj</SearchLabel>
+          <Search
+            onChange={(e) => this.getValue(e)}
+            type={this.state.type === "color" ? "text" : "number"}
+            placeholder={this.state.type}
+          ></Search>
+          <OptionInput onChange={(e) => this.getType(e)}>
+            <option value="color">color</option>
+            <option value="id">id</option>
+          </OptionInput>
+        </SearchWrapper>
+
         <ListWrapper>
           <Item key="id" value="#Id" />
           <Item key="brand" value="#Brand" />
@@ -162,22 +317,56 @@ class List extends React.Component {
                 <Item value={dane.brand} />
                 <Item value={dane.model} />
                 <Item value={dane.color} />
-                <Button value={dane.id} onClick={(e) => this.handleDelete(dane.id)}>
+                <Button
+                  value={dane.id}
+                  onClick={(e) => this.handleDelete(dane.id)}
+                >
                   delete
                 </Button>
                 <Button onClick={(e) => this.handleModify(dane)}>modify</Button>
               </ListWrapper>
             ))
-          : null}
-        
-        {this.state.Cars.id ? <Form>
-        <FromHeader>Modify</FromHeader>
-          <Input content="#Id" name="id" value={this.state.Cars.id}/>
-          <Input content="#Brand" name="brand" valueFn={this.addItem}/>
-          <Input content="#Model" name="model" valueFn={this.addItem}/>
-          <Input content="#Color"  name="color" valueFn={this.addItem}/>
-          <FormButton type="submit" onClick={e => this.submitFunction(e)}>modify</FormButton>
-        </Form> : null }
+          : <ListWrapper key={this.state.data.id}>
+          <Item strong value={this.state.data.id} />
+          <Item value={this.state.data.brand} />
+          <Item value={this.state.data.model} />
+          <Item value={this.state.data.color} />
+          <Button
+            value={this.state.data.id}
+            onClick={(e) => this.handleDelete(this.state.data.id)}
+          >
+            delete
+          </Button>
+          <Button onClick={(e) => this.handleModify(this.state.data)}>modify</Button>
+        </ListWrapper>}
+        <AddItem onClick={this.AddItem}>Dodaj Nowy Samochód</AddItem>
+        {this.state.Cars.id ? (
+          <Form>
+            <FromHeader>{this.state.Cars.type}</FromHeader>
+            <Input
+              content="#Id"
+              name="id"
+              type="number"
+              valueFn={this.changeItem}
+              value={
+                this.state.Cars.type === "modify" ? this.state.Cars.id : null
+              }
+            />
+            <Input content="#Brand" name="brand" valueFn={this.changeItem} />
+            <Input content="#Model" name="model" valueFn={this.changeItem} />
+            <Input content="#Color" name="color" valueFn={this.changeItem} />
+            <FormButton
+              type="submit"
+              onClick={
+                this.state.Cars.type === "modify"
+                  ? (e) => this.submitFunctionModify(e)
+                  : (e) => this.submitFunctionAdd(e)
+              }
+            >
+              modify
+            </FormButton>
+          </Form>
+        ) : null}
       </Wrapper>
     );
   }
