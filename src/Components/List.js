@@ -278,6 +278,7 @@ class List extends React.Component {
     if (getData) {
       this.setState({
         data: getData,
+        ready: 'yes',
       });
     }
   }
