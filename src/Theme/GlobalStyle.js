@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
         padding: 0;
         width: 100vw;
         min-height: 50vh;
+        background-color: #4B4B4B;
     }
 `;
 
