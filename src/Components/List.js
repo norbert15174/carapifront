@@ -250,29 +250,25 @@ class List extends React.Component {
   };
 
   ContentSet = () => {
-    
     this.DataSet.value = this.state.value;
     this.setState({
-      ready: '',
-    })
+      ready: "",
+    });
 
-    if(this.state.type === 'color'){
+    if (this.state.type === "color") {
       this.ContentColorFind(this.DataSet);
-    }else{
+    } else {
       this.findById();
     }
-    
-    
   };
 
-  async findById(){
+  async findById() {
     const getData = await fetch(
       "http://localhost:8080/Cars/" + this.DataSet.value
     ).then((response) => response.json());
     this.setState({
       data: getData,
-    })
-    
+    });
   }
 
   async ContentColorFind(dataProps) {
@@ -310,35 +306,39 @@ class List extends React.Component {
           <Item key="delete" value="#delete" />
           <Item key="modify" value="#modify" />
         </ListWrapper>
-        {this.state.ready === "yes"
-          ? this.state.data.content.map((dane) => (
-              <ListWrapper key={dane.id}>
-                <Item strong value={dane.id} />
-                <Item value={dane.brand} />
-                <Item value={dane.model} />
-                <Item value={dane.color} />
-                <Button
-                  value={dane.id}
-                  onClick={(e) => this.handleDelete(dane.id)}
-                >
-                  delete
-                </Button>
-                <Button onClick={(e) => this.handleModify(dane)}>modify</Button>
-              </ListWrapper>
-            ))
-          : <ListWrapper key={this.state.data.id}>
-          <Item strong value={this.state.data.id} />
-          <Item value={this.state.data.brand} />
-          <Item value={this.state.data.model} />
-          <Item value={this.state.data.color} />
-          <Button
-            value={this.state.data.id}
-            onClick={(e) => this.handleDelete(this.state.data.id)}
-          >
-            delete
-          </Button>
-          <Button onClick={(e) => this.handleModify(this.state.data)}>modify</Button>
-        </ListWrapper>}
+        {this.state.ready === "yes" ? (
+          this.state.data.content.map((dane) => (
+            <ListWrapper key={dane.id}>
+              <Item strong value={dane.id} />
+              <Item value={dane.brand} />
+              <Item value={dane.model} />
+              <Item value={dane.color} />
+              <Button
+                value={dane.id}
+                onClick={(e) => this.handleDelete(dane.id)}
+              >
+                delete
+              </Button>
+              <Button onClick={(e) => this.handleModify(dane)}>modify</Button>
+            </ListWrapper>
+          ))
+        ) : (
+          <ListWrapper key={this.state.data.id}>
+            <Item strong value={this.state.data.id} />
+            <Item value={this.state.data.brand} />
+            <Item value={this.state.data.model} />
+            <Item value={this.state.data.color} />
+            <Button
+              value={this.state.data.id}
+              onClick={(e) => this.handleDelete(this.state.data.id)}
+            >
+              delete
+            </Button>
+            <Button onClick={(e) => this.handleModify(this.state.data)}>
+              modify
+            </Button>
+          </ListWrapper>
+        )}
         <AddItem onClick={this.AddItem}>Dodaj Nowy Samochód</AddItem>
         {this.state.Cars.id ? (
           <Form>
@@ -363,7 +363,7 @@ class List extends React.Component {
                   : (e) => this.submitFunctionAdd(e)
               }
             >
-              modify
+              {this.state.Cars.type === "modify" ? 'modify' : 'addNewCar'}
             </FormButton>
           </Form>
         ) : null}
